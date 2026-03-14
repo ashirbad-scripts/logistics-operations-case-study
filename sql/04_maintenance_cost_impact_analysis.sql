@@ -68,40 +68,10 @@ FROM (
 		SUM(downtime_hours) AS downtime,
 		DENSE_RANK() OVER(ORDER BY SUM(downtime_hours) DESC) AS rnk
 	FROM maintenance_records
-	WHERE maintenance_date >= DATE '2024-08-01' - INTERVAL '6 months'
+	WHERE maintenance_date >= DATE '2024-12-31' - INTERVAL '6 months'
 	GROUP BY truck_id
 ) AS ranked
 WHERE rnk <= 5;
-
-
-
-WITH downtime AS (
-    SELECT
-        truck_id,
-        DATE_TRUNC('month', maintenance_date) AS month,
-        SUM(downtime_hours) AS downtime
-    FROM maintenance_records
-    GROUP BY truck_id, DATE_TRUNC('month', maintenance_date)
-),
-trip_count AS (
-    SELECT
-        truck_id,
-        DATE_TRUNC('month', dispatch_date) AS month,
-        COUNT(trip_id) AS trips
-    FROM trips
-    GROUP BY truck_id, DATE_TRUNC('month', dispatch_date)
-)
-SELECT
-    d.truck_id,
-    d.month,
-    d.downtime,
-    t.trips
-FROM downtime d
-JOIN trip_count t
-    ON d.truck_id = t.truck_id
-    AND d.month = t.month
-ORDER BY d.truck_id, d.month;
-
 
 
 -- Downtime Impact on Monthly Trip Count
