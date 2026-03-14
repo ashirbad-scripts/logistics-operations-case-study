@@ -64,11 +64,12 @@ WHERE rev_rnk <= 5;
 WITH customer_revenue AS (
 	SELECT 
 		c.customer_id,
+		c.customer_name,
 		SUM(l.revenue) AS customer_revenue
 	FROM customers c
 	JOIN loads l
 		ON c.customer_id = l.customer_id
-	GROUP BY c.customer_id
+	GROUP BY c.customer_id, c.customer_name
 ),
 total_company_revenue AS (
 	SELECT SUM(revenue) AS total_revenue 
@@ -76,6 +77,7 @@ total_company_revenue AS (
 )
 SELECT
 	c.customer_id,
+	c.customer_name,
 	c.customer_revenue,
 	ROUND(100.0 * (c.customer_revenue / t.total_revenue), 2) AS revenue_share_percent
 FROM customer_revenue c
@@ -104,11 +106,19 @@ ORDER BY customer_id, "month"
 
 -- Which customer contributed the most revenue this year?
 -- If current date then use this formula `DATE_PART('year', CURRENT_DATE)`
-SELECT
-    customer_id,
-    SUM(revenue) AS total_revenue
-FROM loads
-WHERE DATE_PART('year', load_date) = 2024
-GROUP BY customer_id
-ORDER BY total_revenue DESC
-LIMIT 1;
+WITH X AS (
+	SELECT
+	    customer_id,
+	    SUM(revenue) AS total_revenue
+	FROM loads
+	WHERE DATE_PART('year', load_date) = 2024
+	GROUP BY customer_id
+	ORDER BY total_revenue ASC
+	LIMIT 1
+)
+SELECT 
+	x.customer_id,
+	c.customer_name,
+	x.total_revenue
+FROM x
+JOIN customers c ON c.customer_id = x.customer_id;
