@@ -1,5 +1,3 @@
-
-
 -- Fuel Efficiency Analysis
 
 -- Average MPG per Route
@@ -76,7 +74,8 @@ SELECT
 	r.avg_mpg
 FROM route_mpg r
 CROSS JOIN median_mpg m
-WHERE r.avg_mpg < m.fleet_median;
+WHERE r.avg_mpg < m.fleet_median
+ORDER BY avg_mpg DESC;
 
 
 -- Rolling Average MPG per Route
@@ -139,7 +138,7 @@ FROM (
 		AVG(gallons) OVER(PARTITION BY location_city) AS city_avg_gallons
 	FROM fuel_purchases
 ) t
-WHERE gallons > city_Avg_gallons
+WHERE gallons > city_avg_gallons
 ORDER BY location_city, gallons DESC;
 
 
@@ -176,15 +175,3 @@ AND total_fuel_spent > (
 		FROM driver_fuel_cost
 )
 ORDER BY total_fuel_spent DESC;
-
-
-
-
-
-
-
-
-
-
-
-
