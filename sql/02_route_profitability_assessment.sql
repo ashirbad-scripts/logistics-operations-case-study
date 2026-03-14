@@ -146,33 +146,3 @@ WHERE DATE_TRUNC('month', load_date) = (SELECT last_month FROM last_month)
 GROUP BY route_id
 ORDER BY revenue DESC
 LIMIT 1;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
