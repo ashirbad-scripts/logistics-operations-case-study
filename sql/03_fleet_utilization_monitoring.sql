@@ -117,30 +117,3 @@ FROM (
 ) t
 WHERE growth_miles IS NOT NULL
 ORDER BY truck_id, "month";
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
